@@ -9,7 +9,7 @@ python -m venv venv
 pip install -r requirements.txt
 
 echo "Starting Backend API..."
-Start-Process powershell -ArgumentList "-NoExit", "-Command", ".\venv\Scripts\activate; uvicorn app.main:app --reload"
+Start-Process powershell -ArgumentList "-NoExit", "-Command", ".\venv\Scripts\activate; uvicorn app.main:app --reload --port 8001"
 
 echo "Installing frontend dependencies..."
 cd ..\frontend
