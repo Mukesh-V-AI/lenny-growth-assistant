@@ -90,7 +90,7 @@ def generate_response(engine: str, system_prompt: str, history: list, user_promp
             base_url="https://openrouter.ai/api/v1"
         )
         response = client.chat.completions.create(
-            model="nvidia/nemotron-3-ultra-550b-a55b:free",
+            model="nvidia/nemotron-3-super-120b-a12b:free",
             messages=openai_messages
         )
         return response.choices[0].message.content
@@ -238,16 +238,15 @@ def chat(session_id: uuid.UUID, req: ChatRequest, database: DBSession = Depends(
             print("Vector store search failed:", vec_err)
             context = "No context available (RAG search failed)."
         
-        system_prompt = f"""You are a highly intelligent AI built to answer product management and growth questions based on Lenny's Podcast transcripts.
-Your behavior is governed by these rules:
-1. You must base your answers on the Knowledge Base Context provided below.
-2. If the user asks a question and the exact answer isn't available, but highly relevant context IS available (e.g., they ask for someone's podcast, but the context shows the title of their podcast *episode*), intelligently infer their intent and provide the relevant information rather than flatly refusing to answer. 
-3. Answer the user's question to the best of your ability using ONLY the available information in the provided context, even if the context isn't a perfect match for the specific name or entity they asked about.
-4. When answering using the context, you MUST explicitly cite the Source URLs.
-5. Use bullet points and extract key insights clearly.
+        system_prompt = f"""You are a helpful and intelligent AI built to answer product management and growth questions. You have access to a Knowledge Base consisting of transcripts from Lenny's Podcast.
 
 Knowledge Base Context:
-{context}"""
+{context}
+
+Please answer the user's question flexibly and comprehensively. 
+1. Use the Knowledge Base Context to ground your answer whenever possible, and cite the Source URLs when you do.
+2. If the exact answer is not available in the context, do not refuse to answer. Instead, use your best judgment and general knowledge to provide a helpful, relevant answer to the user.
+3. Be conversational, helpful, and focus on providing value."""
         
         if req.skill == "ship30for30":
             system_prompt = f"""You are the Lenny Growth Assistant. Your task is to write a high-quality Ship30for30 essay using the provided context.
