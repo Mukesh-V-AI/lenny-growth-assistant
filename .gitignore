@@ -1,0 +1,9 @@
+node_modules/
+backend/venv/
+.next/
+__pycache__/
+*.pyc
+.env
+.DS_Store
+agent_logs/
+agent_transcripts/
