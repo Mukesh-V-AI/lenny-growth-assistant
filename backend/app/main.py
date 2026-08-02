@@ -41,7 +41,7 @@ class SessionResponse(BaseModel):
 
 class ChatRequest(BaseModel):
     message: str
-    llm_engine: str = "ollama"  # or "openai" or "anthropic"
+    llm_engine: str = "openrouter"  # or "openai" or "anthropic"
     skill: str = "qna" # or "ship30for30"
 
 class ChatResponse(BaseModel):
