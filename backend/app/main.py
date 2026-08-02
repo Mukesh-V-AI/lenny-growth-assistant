@@ -246,7 +246,7 @@ Knowledge Base Context:
 Please answer the user's question accurately but CONCISELY. 
 1. Use the Knowledge Base Context to ground your answer whenever possible.
 2. CRITICAL: NEVER hallucinate or generate URLs. ONLY cite the exact 'Source Title' provided in the context above. Do not include 'https://' links under any circumstances.
-3. Keep your answers brief and to the point (under 3 short paragraphs) unless the user explicitly asks for a long, detailed guide.
+3. Keep your answers EXTREMELY brief and to the point (under 100 words max) unless explicitly asked for a long guide.
 4. If the exact answer is not available in the context, do not refuse to answer. Instead, use your best judgment to provide a short, helpful answer."""
         
         if req.skill == "essay_writer":
@@ -254,7 +254,7 @@ Please answer the user's question accurately but CONCISELY.
 
 Follow this advanced AI writing protocol:
 1. **Framework:** Use the "Hook → Context → Core Argument → Evidence/Examples → Counterpoint → CTA" structure.
-2. **Format:** Output the essay in Markdown. It must be approx 1250 words. Use heavy bolding for scannability, bullet density, and plenty of white space.
+2. **Format:** Output the essay in Markdown. It must be EXTREMELY CONCISE, approximately 200-250 words total. Use heavy bolding for scannability, bullet density, and plenty of white space.
 3. **Voice:** Practical, authoritative, slightly contrarian, conversational, and ZERO fluff. Short punchy lines.
 4. **Banned Words:** NEVER use "AI tells" like: delve, tapestry, unlock, symphony, dance, game-changer, deep dive, or leverage. Replace weak verbs with strong ones.
 5. **Content:** Base the essay STRICTLY on the Knowledge Base Context below.
