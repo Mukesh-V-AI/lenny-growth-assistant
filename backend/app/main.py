@@ -255,16 +255,18 @@ Please answer the user's question accurately but CONCISELY.
 4. If the exact answer is not available in the context, do not refuse to answer. Instead, use your best judgment to provide a short, helpful answer."""
         
         if req.skill == "essay_writer":
-            system_prompt = f"""You are the Lenny Growth Assistant. Your task is to write a high-quality atomic essay using the provided context.
+            system_prompt = f"""You are the Lenny Growth Assistant. Your task is to generate high-quality artifacts based on the user's request and the Knowledge Base Context.
 
-Follow this advanced AI writing protocol:
-1. **Framework:** Use the "Hook → Context → Core Argument → Evidence/Examples → Counterpoint → CTA" structure.
-2. **Format:** Output the essay in Markdown. It must be EXTREMELY CONCISE, approximately 200-250 words total. Use heavy bolding for scannability, bullet density, and plenty of white space.
-3. **Voice:** Practical, authoritative, slightly contrarian, conversational, and ZERO fluff. Short punchy lines.
-4. **Banned Words:** NEVER use "AI tells" like: delve, tapestry, unlock, symphony, dance, game-changer, deep dive, or leverage. Replace weak verbs with strong ones.
-5. **Content:** Base the essay STRICTLY on the Knowledge Base Context below.
+If the user asks for an essay, article, or text document:
+1. Output in Markdown.
+2. Be extremely concise (200-250 words), use heavy bolding, bullet density, and practical, authoritative tone.
 
-Return ONLY the clean markdown essay. DO NOT include any introductory or concluding pleasantries outside the essay itself.
+If the user asks for a UI component, dashboard, or website:
+1. Output ONLY raw, complete HTML code (with inline CSS/Tailwind).
+2. Do NOT output markdown formatting blocks like ```html.
+3. Use modern aesthetics (glassmorphism, vibrant gradients).
+
+CRITICAL: Return ONLY the raw artifact (either Markdown or HTML). DO NOT include any conversational pleasantries outside the artifact.
 
 Knowledge Base Context:
 {context}"""
@@ -294,22 +296,27 @@ Knowledge Base Context:
         final_reply = reply_text
 
         if req.skill == "essay_writer":
-            artifact_content = reply_text
-            artifact_type = "markdown"
-            final_reply = "I have generated the essay for you based on Lenny's insights."
-        elif req.skill == "ui_builder":
-            # Strip markdown code blocks if the LLM accidentally includes them
-            clean_html = reply_text
-            if clean_html.startswith("```html"):
-                clean_html = clean_html[7:]
-            if clean_html.startswith("```"):
-                clean_html = clean_html[3:]
-            if clean_html.endswith("```"):
-                clean_html = clean_html[:-3]
+            clean_text = reply_text.strip()
+            if clean_text.startswith("```html"):
+                clean_text = clean_text[7:]
+            if clean_text.startswith("```markdown"):
+                clean_text = clean_text[11:]
+            if clean_text.startswith("```"):
+                clean_text = clean_text[3:]
+            if clean_text.endswith("```"):
+                clean_text = clean_text[:-3]
+            clean_text = clean_text.strip()
+            
+            artifact_content = clean_text
+            
+            # Simple heuristic to determine artifact type
+            lower_text = clean_text.lower()
+            if lower_text.startswith("<") and ("<html" in lower_text or "<div" in lower_text or "<style" in lower_text):
+                artifact_type = "html"
+            else:
+                artifact_type = "markdown"
                 
-            artifact_content = clean_html.strip()
-            artifact_type = "html"
-            final_reply = "I have built the UI component for you based on the context."        # Save AI Message
+            final_reply = "I have generated the requested artifact for you based on the context."        # Save AI Message
         ai_msg = models.Message(
             session_id=session_id, 
             role="assistant", 
