@@ -243,11 +243,11 @@ def chat(session_id: uuid.UUID, req: ChatRequest, database: DBSession = Depends(
 Knowledge Base Context:
 {context}
 
-Please answer the user's question flexibly and comprehensively. 
+Please answer the user's question accurately but CONCISELY. 
 1. Use the Knowledge Base Context to ground your answer whenever possible.
 2. CRITICAL: NEVER hallucinate or generate URLs. ONLY cite the exact 'Source Title' provided in the context above. Do not include 'https://' links under any circumstances.
-3. If the exact answer is not available in the context, do not refuse to answer. Instead, use your best judgment to provide a helpful answer.
-4. Be conversational, helpful, and focus on providing value."""
+3. Keep your answers brief and to the point (under 3 short paragraphs) unless the user explicitly asks for a long, detailed guide.
+4. If the exact answer is not available in the context, do not refuse to answer. Instead, use your best judgment to provide a short, helpful answer."""
         
         if req.skill == "ship30for30":
             system_prompt = f"""You are the Lenny Growth Assistant. Your task is to write a high-quality Ship30for30 essay using the provided context.
