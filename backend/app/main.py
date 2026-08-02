@@ -227,7 +227,7 @@ def chat(session_id: uuid.UUID, req: ChatRequest, database: DBSession = Depends(
                     "url": meta.get("source", ""),
                     "timestamp": ""
                 })
-                context_parts.append(f"Source: {meta.get('source', 'Unknown URL')}\nContent: {doc_text}")
+                context_parts.append(f"Source Title: {title}\nContent: {doc_text}")
                 
             context = "\n\n".join(context_parts)
             
@@ -244,7 +244,7 @@ Knowledge Base Context:
 {context}
 
 Please answer the user's question flexibly and comprehensively. 
-1. Use the Knowledge Base Context to ground your answer whenever possible, and cite the Source URLs when you do.
+1. Use the Knowledge Base Context to ground your answer whenever possible, and cite the Source Title when you do.
 2. If the exact answer is not available in the context, do not refuse to answer. Instead, use your best judgment and general knowledge to provide a helpful, relevant answer to the user.
 3. Be conversational, helpful, and focus on providing value."""
         
