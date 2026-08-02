@@ -87,7 +87,8 @@ def generate_response(engine: str, system_prompt: str, history: list, user_promp
     elif engine == "openrouter":
         client = openai_sdk.OpenAI(
             api_key=os.getenv("OPENROUTER_API_KEY").strip(),
-            base_url="https://openrouter.ai/api/v1"
+            base_url="https://openrouter.ai/api/v1",
+            timeout=30.0
         )
         response = client.chat.completions.create(
             model="nvidia/nemotron-3-super-120b-a12b:free",
