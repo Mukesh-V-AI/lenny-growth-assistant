@@ -42,7 +42,7 @@ class SessionResponse(BaseModel):
 class ChatRequest(BaseModel):
     message: str
     llm_engine: str = "openrouter"  # or "openai" or "anthropic"
-    skill: str = "qna" # or "ship30for30"
+    skill: str = "qna" # or "essay_writer"
 
 class ChatResponse(BaseModel):
     reply: str
@@ -249,8 +249,8 @@ Please answer the user's question accurately but CONCISELY.
 3. Keep your answers brief and to the point (under 3 short paragraphs) unless the user explicitly asks for a long, detailed guide.
 4. If the exact answer is not available in the context, do not refuse to answer. Instead, use your best judgment to provide a short, helpful answer."""
         
-        if req.skill == "ship30for30":
-            system_prompt = f"""You are the Lenny Growth Assistant. Your task is to write a high-quality Ship30for30 essay using the provided context.
+        if req.skill == "essay_writer":
+            system_prompt = f"""You are the Lenny Growth Assistant. Your task is to write a high-quality atomic essay using the provided context.
 
 Follow this advanced AI writing protocol:
 1. **Framework:** Use the "Hook → Context → Core Argument → Evidence/Examples → Counterpoint → CTA" structure.
@@ -274,10 +274,10 @@ Knowledge Base Context:
         artifact_type = None
         final_reply = reply_text
 
-        if req.skill == "ship30for30":
+        if req.skill == "essay_writer":
             artifact_content = reply_text
             artifact_type = "markdown"
-            final_reply = "I have generated the Ship30for30 essay for you based on Lenny's insights."
+            final_reply = "I have generated the essay for you based on Lenny's insights."
 
         # Save AI Message
         ai_msg = models.Message(
