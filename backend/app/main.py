@@ -202,7 +202,7 @@ def chat(session_id: uuid.UUID, req: ChatRequest, database: DBSession = Depends(
             response = supabase.rpc("hybrid_search_documents", {
                 "query_text": req.message,
                 "query_embedding": query_vector,
-                "match_count": 5
+                "match_count": 3
             }).execute()
             
             with open("debug_search.log", "w") as f:
@@ -244,9 +244,10 @@ Knowledge Base Context:
 {context}
 
 Please answer the user's question flexibly and comprehensively. 
-1. Use the Knowledge Base Context to ground your answer whenever possible, and cite the Source Title when you do.
-2. If the exact answer is not available in the context, do not refuse to answer. Instead, use your best judgment and general knowledge to provide a helpful, relevant answer to the user.
-3. Be conversational, helpful, and focus on providing value."""
+1. Use the Knowledge Base Context to ground your answer whenever possible.
+2. CRITICAL: NEVER hallucinate or generate URLs. ONLY cite the exact 'Source Title' provided in the context above. Do not include 'https://' links under any circumstances.
+3. If the exact answer is not available in the context, do not refuse to answer. Instead, use your best judgment to provide a helpful answer.
+4. Be conversational, helpful, and focus on providing value."""
         
         if req.skill == "ship30for30":
             system_prompt = f"""You are the Lenny Growth Assistant. Your task is to write a high-quality Ship30for30 essay using the provided context.
