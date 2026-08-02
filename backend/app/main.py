@@ -158,8 +158,13 @@ def get_messages(session_id: uuid.UUID, database: DBSession = Depends(db.get_db)
         })
     return res
 
+@app.post("/test_chat")
+def test_chat(req: ChatRequest):
+    return {"skill": req.skill, "message": req.message}
+
 @app.post("/sessions/{session_id}/chat", response_model=ChatResponse)
 def chat(session_id: uuid.UUID, req: ChatRequest, database: DBSession = Depends(db.get_db)):
+    print(f"DEBUG INCOMING SKILL: '{req.skill}'")
     try:
         # Update Session Title if it's the first message
         session = database.query(models.Session).filter(models.Session.id == session_id).first()
@@ -263,6 +268,20 @@ Return ONLY the clean markdown essay. DO NOT include any introductory or conclud
 
 Knowledge Base Context:
 {context}"""
+        elif req.skill == "ui_builder":
+            system_prompt = f"""You are an expert Frontend Developer and Designer. Your task is to build a beautiful, modern UI component based on the user's request and the provided Knowledge Base context.
+
+Follow this strict protocol:
+1. **Format:** You MUST output ONLY raw, complete HTML code. Do NOT output markdown formatting blocks like ```html.
+2. **Styling:** Use inline CSS or a <style> block inside the HTML. Do NOT use external CSS files. You may use standard TailwindCSS classes via a CDN if you include the CDN script tag.
+3. **Quality:** The design must be visually stunning, using modern aesthetics (glassmorphism, soft shadows, vibrant gradients, clean typography).
+4. **Content:** Ensure the text and data within the UI component is directly relevant to the user's request and the Knowledge Base Context below.
+5. **Completeness:** Return a complete HTML snippet that can be rendered directly in an iframe.
+
+Return ONLY the raw HTML code. DO NOT include any conversational pleasantries.
+
+Knowledge Base Context:
+{context}"""
         
         # Generate Response using raw SDKs
         reply_text = generate_response(req.llm_engine, system_prompt, history, req.message)
@@ -278,8 +297,19 @@ Knowledge Base Context:
             artifact_content = reply_text
             artifact_type = "markdown"
             final_reply = "I have generated the essay for you based on Lenny's insights."
-
-        # Save AI Message
+        elif req.skill == "ui_builder":
+            # Strip markdown code blocks if the LLM accidentally includes them
+            clean_html = reply_text
+            if clean_html.startswith("```html"):
+                clean_html = clean_html[7:]
+            if clean_html.startswith("```"):
+                clean_html = clean_html[3:]
+            if clean_html.endswith("```"):
+                clean_html = clean_html[:-3]
+                
+            artifact_content = clean_html.strip()
+            artifact_type = "html"
+            final_reply = "I have built the UI component for you based on the context."        # Save AI Message
         ai_msg = models.Message(
             session_id=session_id, 
             role="assistant", 
